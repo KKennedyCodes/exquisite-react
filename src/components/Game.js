@@ -8,8 +8,40 @@ class Game extends Component {
 
   constructor(props) {
     super(props);
+    this.state = {
+      poem: [],
+      line: '',
+      usernum: 1,
+      complete: false,
+    }
+  }
+  
+  addLine = (newLine) => {
+    const poem = this.state.poem;
+    poem.push(newLine);
+    console.log(newLine);
+    let newuser=this.state.usernum + 1;
+    this.setState({ 
+      poem,
+      line: newLine,
+      usernum: newuser,
+    });
   }
 
+  finishGame = (status) => {
+    this.setState({
+      complete: status,
+    })
+  }
+
+  buildGame = () => {
+    return (
+      <div>
+        <RecentSubmission line={this.state.line}/>
+        <PlayerSubmissionForm addLineCallback={this.addLine} usernum={this.state.usernum}/>
+      </div>
+    )
+  }
   render() {
 
     const exampleFormat = FIELDS.map((field) => {
@@ -19,8 +51,9 @@ class Game extends Component {
         return field;
       }
     }).join(" ");
-
+    console.log(this.state.poem);
     return (
+      
       <div className="Game">
         <h2>Game</h2>
 
@@ -32,12 +65,9 @@ class Game extends Component {
           { exampleFormat }
         </p>
 
-        <RecentSubmission />
-
-        <PlayerSubmissionForm />
-
-        <FinalPoem />
-
+        {this.state.complete ? '' : this.buildGame()}
+        <FinalPoem poem={this.state.poem} complete={this.state.complete} finishGame={this.finishGame}/> 
+        
       </div>
     );
   }
